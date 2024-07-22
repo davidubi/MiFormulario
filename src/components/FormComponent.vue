@@ -1,0 +1,242 @@
+<template>
+<div class="form-container">
+    <h2>Formulario de Datos</h2>
+    <form @submit.prevent="handleSubmit" class="form">
+      <!-- Campos del formulario -->
+      <div class="form-group">
+        <label for="name">Nombre:</label>
+        <input v-model="formData.name" id="name" type="text" />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Correo Electrónico:</label>
+        <input v-model="formData.email" id="email" type="email" />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Contraseña:</label>
+        <input v-model="formData.password" id="password" type="password" />
+      </div>
+
+      <div class="form-group">
+        <label for="dob">Fecha de Nacimiento:</label>
+        <input v-model="formData.dob" id="dob" type="date" />
+      </div>
+
+      <div class="form-group">
+        <label for="gender">Género:</label>
+        <select v-model="formData.gender" id="gender">
+          <option value="">Seleccionar</option>
+          <option value="Masculino">Masculino</option>
+          <option value="Femenino">Femenino</option>
+          <option value="Otro">Otro</option>
+        </select>
+      </div>
+
+      <!-- Selección de Hobbies -->
+      <div class="form-group">
+        <label>Hobbies:</label>
+        <div class="tags-selection">
+          <div
+            v-for="hobby in availableHobbies"
+            :key="hobby"
+            class="tag-option"
+          >
+            <label>
+              <input
+                type="checkbox"
+                :value="hobby"
+                v-model="selectedHobbies"
+              />
+              {{ hobby }}
+            </label>
+          </div>
+        </div>
+        <div class="selected-tags">
+          <span
+            v-for="hobby in selectedHobbies"
+            :key="hobby"
+            class="tag"
+          >
+            {{ hobby }}
+            <button type="button" @click="removeHobby(hobby)">x</button>
+          </span>
+        </div>
+      </div>
+
+      <button type="submit">Enviar</button>
+    </form>
+
+    <div v-if="submitted" class="submitted-data">
+      <h3>Datos Enviados:</h3>
+      <ul>
+        <li><strong>Nombre:</strong> {{ formData.name }}</li>
+        <li><strong>Correo Electrónico:</strong> {{ formData.email }}</li>
+        <li><strong>Contraseña:</strong> {{ formData.password }}</li>
+        <li><strong>Fecha de Nacimiento:</strong> {{ formData.dob }}</li>
+        <li><strong>Género:</strong> {{ formData.gender }}</li>
+        <li><strong>Hobbies:</strong> {{ selectedHobbies.join(', ') }}</li>
+      </ul>
+    </div>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import { ref } from 'vue';
+
+// Definición de la interfaz para los datos del formulario
+interface FormData {
+  name: string;
+  email: string;
+  password: string;
+  dob: string;
+  gender: string;
+}
+
+// Datos iniciales del formulario
+const formData = ref<FormData>({
+  name: '',
+  email: '',
+  password: '',
+  dob: '',
+  gender: '',
+});
+
+const selectedHobbies = ref<string[]>([]);
+
+// Lista de hobbies
+const availableHobbies = [
+  'Fútbol',
+  'Bailar',
+  'Cantar',
+  'Viajar',
+  'Escalada',
+  'Informática'
+];
+
+const submitted = ref(false);
+
+function handleSubmit() {
+  submitted.value = true;
+}
+
+function removeHobby(hobby: string) {
+  selectedHobbies.value = selectedHobbies.value.filter(h => h !== hobby);
+}
+</script>
+
+<style scoped>
+.form-container {
+  max-width: 700px;
+  margin: 2em auto;
+  padding: 2em;
+  border: 2px solid #007bff;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  text-align: center;
+  color: #007bff;
+  margin-bottom: 1em;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  margin-bottom: 1.5em;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5em;
+  font-weight: bold;
+  color: #333;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+select {
+  display: block;
+  margin-bottom: 0.5em;
+  width: 100%;
+  padding: 0.75em;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1em;
+}
+
+button {
+  padding: 0.75em 1.5em;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.tags-selection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+}
+
+.tag-option {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5em;
+}
+
+.selected-tags {
+  margin-top: 0.5em;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  background-color: #e0e0e0;
+  border-radius: 15px;
+  padding: 0.3em 0.6em;
+  font-size: 0.9em;
+  color: #333;
+}
+
+.tag button {
+  background: none;
+  border: none;
+  color: #ff4d4f;
+  cursor: pointer;
+  margin-left: 0.5em;
+  font-weight: bold;
+  font-size: 1em;
+}
+
+.submitted-data {
+  margin-top: 2em;
+}
+
+.submitted-data ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  text-align: left; /* Alinea el texto a la izquierda */
+}
+
+.submitted-data li {
+  margin-bottom: 0.5em;
+}
+</style>
